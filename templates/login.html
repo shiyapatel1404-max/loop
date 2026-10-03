@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Project LOOP{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-brand">Project <span>LOOP</span></div>
+        <h1>Welcome back</h1>
+        <p class="muted">Customer Feedback Intelligence Platform</p>
+
+        <form method="POST" class="form">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="admin@loop.com" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <button type="submit" class="btn primary full">Login</button>
+        </form>
+
+        <div class="demo-box">
+            <strong>Demo account</strong>
+            <div>Email: <code>admin@loop.com</code></div>
+            <div>Password: <code>admin123</code></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

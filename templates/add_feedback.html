@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Add Feedback | Project LOOP{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Add Customer Feedback</h1>
+        <p class="muted">Add feedback and automatically analyze it.</p>
+    </div>
+</div>
+
+<div class="card form-card">
+    <form method="POST" class="form">
+        <div class="form-grid">
+            <div>
+                <label>Customer Name</label>
+                <input type="text" name="customer_name" placeholder="John Doe">
+            </div>
+
+            <div>
+                <label>Customer Email</label>
+                <input type="email" name="customer_email" placeholder="john@example.com">
+            </div>
+
+            <div>
+                <label>Source</label>
+                <select name="source">
+                    <option>Website</option>
+                    <option>Email</option>
+                    <option>Support</option>
+                    <option>App Store</option>
+                    <option>Google Reviews</option>
+                    <option>Social Media</option>
+                    <option>Survey</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Rating</label>
+                <select name="rating">
+                    <option value="">No rating</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Neutral</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Very poor</option>
+                </select>
+            </div>
+        </div>
+
+        <label>Feedback Message *</label>
+        <textarea name="message" rows="8" placeholder="Enter the customer's feedback..." required></textarea>
+
+        <div class="form-actions">
+            <a href="{{ url_for('feedback') }}" class="btn secondary">Cancel</a>
+            <button type="submit" class="btn primary">Analyze & Save Feedback</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

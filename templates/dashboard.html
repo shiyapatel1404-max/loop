@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Project LOOP{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Feedback Dashboard</h1>
+        <p class="muted">Welcome, {{ user.name if user else 'User' }}.</p>
+    </div>
+    <a href="{{ url_for('add_feedback') }}" class="btn primary">+ Add Feedback</a>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total Feedback</span>
+        <strong id="totalFeedback">0</strong>
+    </div>
+    <div class="stat-card positive-card">
+        <span>Positive</span>
+        <strong id="positiveFeedback">0</strong>
+    </div>
+    <div class="stat-card negative-card">
+        <span>Negative</span>
+        <strong id="negativeFeedback">0</strong>
+    </div>
+    <div class="stat-card neutral-card">
+        <span>Neutral</span>
+        <strong id="neutralFeedback">0</strong>
+    </div>
+</div>
+
+<div class="chart-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2>Sentiment Overview</h2>
+        </div>
+        <div class="chart-wrapper small-chart">
+            <canvas id="sentimentChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Feedback by Category</h2>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div class="card">
+        <div class="card-header">
+            <h2>Top Themes</h2>
+        </div>
+        <div id="themesList" class="themes-list">
+            <div class="empty">Loading...</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Recent Feedback</h2>
+            <a href="{{ url_for('feedback') }}">View all</a>
+        </div>
+        <div id="recentFeedback" class="recent-list">
+            <div class="empty">Loading...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

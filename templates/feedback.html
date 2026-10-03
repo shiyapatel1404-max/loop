@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Feedback | Project LOOP{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Customer Feedback</h1>
+        <p class="muted">Browse analyzed customer feedback.</p>
+    </div>
+    <a href="{{ url_for('add_feedback') }}" class="btn primary">+ Add Feedback</a>
+</div>
+
+<div class="card table-card">
+    {% if feedback %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Source</th>
+                    <th>Rating</th>
+                    <th>Sentiment</th>
+                    <th>Category</th>
+                    <th>Theme</th>
+                    <th>Priority</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in feedback %}
+                <tr id="row-{{ item.id }}">
+                    <td>
+                        <strong>{{ item.customer_name or 'Anonymous' }}</strong>
+                        {% if item.customer_email %}
+                        <small>{{ item.customer_email }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.source }}</td>
+                    <td>{{ item.rating or '—' }}</td>
+                    <td><span class="badge {{ item.sentiment|lower }}">{{ item.sentiment }}</span></td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.theme }}</td>
+                    <td><span class="badge {{ item.priority|lower }}">{{ item.priority }}</span></td>
+                    <td>{{ item.created_at }}</td>
+                    <td>
+                        <button class="icon-btn delete-btn" data-id="{{ item.id }}" title="Delete">×</button>
+                    </td>
+                </tr>
+                <tr class="message-row">
+                    <td colspan="9">{{ item.message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty large">No feedback yet. Add your first feedback entry.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll(".delete-btn").forEach(button => {
+    button.addEventListener("click", async () => {
+        const id = button.dataset.id;
+        if (!confirm("Delete this feedback?")) return;
+
+        const response = await fetch(`/api/feedback/${id}`, { method: "DELETE" });
+        if (response.ok) {
+            const row = document.getElementById(`row-${id}`);
+            row?.nextElementSibling?.remove();
+            row?.remove();
+        } else {
+            alert("Unable to delete feedback.");
+        }
+    });
+});
+</script>
+{% endblock %}
