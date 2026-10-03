@@ -3,75 +3,667 @@
 {% block title %}Dashboard | Project LOOP{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div>
+
+<style>
+    .dashboard-page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 28px 32px 50px;
+    }
+
+    /* Header */
+    .dashboard-top {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-title h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.7px;
+        color: #111827;
+    }
+
+    .dashboard-title p {
+        margin: 7px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .dashboard-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dashboard-date {
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #fff;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .dashboard-add {
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 17px;
+        border-radius: 10px;
+        background: #111827;
+        color: #fff !important;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: .2s ease;
+    }
+
+    .dashboard-add:hover {
+        background: #1f2937;
+        transform: translateY(-1px);
+    }
+
+    /* Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 132px;
+        padding: 21px;
+        background: #fff;
+        border: 1px solid #e7eaf0;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .035);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 65px;
+        height: 65px;
+        right: -24px;
+        top: -24px;
+        border-radius: 50%;
+        background: #f3f4f6;
+    }
+
+    .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .stat-icon {
+        position: relative;
+        z-index: 1;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        background: #f5f6f8;
+        color: #374151;
+        font-size: 16px;
+    }
+
+    .stat-value {
+        display: block;
+        margin-top: 14px;
+        font-size: 29px;
+        line-height: 1;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: -0.7px;
+    }
+
+    .stat-note {
+        margin-top: 9px;
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .positive-card .stat-icon {
+        background: #ecfdf3;
+        color: #15803d;
+    }
+
+    .negative-card .stat-icon {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .neutral-card .stat-icon {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    /* Section heading */
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        font-size: 15px;
+        color: #111827;
+        font-weight: 650;
+    }
+
+    .section-heading span {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    /* Charts */
+    .chart-grid {
+        display: grid;
+        grid-template-columns: .85fr 1.15fr;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid #e7eaf0;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .035);
+        overflow: hidden;
+    }
+
+    .card-header {
+        min-height: 62px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #eef0f3;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 650;
+        color: #111827;
+    }
+
+    .card-header .subtext {
+        margin-top: 3px;
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+    .card-header a {
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .card-header a:hover {
+        text-decoration: underline;
+    }
+
+    .chart-body {
+        height: 285px;
+        padding: 20px;
+    }
+
+    .small-chart {
+        height: 285px;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Bottom content */
+    .content-grid {
+        display: grid;
+        grid-template-columns: .8fr 1.2fr;
+        gap: 18px;
+    }
+
+    /* Themes */
+    .themes-list {
+        padding: 8px 20px 18px;
+    }
+
+    .theme-item {
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .theme-item:last-child {
+        border-bottom: 0;
+    }
+
+    .theme-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+    .theme-name {
+        color: #374151;
+        font-size: 13px;
+        font-weight: 550;
+    }
+
+    .theme-value {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .theme-bar {
+        height: 5px;
+        width: 100%;
+        background: #f1f3f5;
+        border-radius: 99px;
+        overflow: hidden;
+    }
+
+    .theme-progress {
+        height: 100%;
+        border-radius: 99px;
+        background: #4f46e5;
+    }
+
+    /* Recent feedback */
+    .recent-list {
+        padding: 5px 20px 12px;
+    }
+
+    .feedback-item {
+        display: flex;
+        gap: 13px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .feedback-item:last-child {
+        border-bottom: 0;
+    }
+
+    .feedback-avatar {
+        flex: 0 0 36px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #f3f4f6;
+        color: #4b5563;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .feedback-main {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .feedback-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .feedback-name {
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .feedback-time {
+        color: #9ca3af;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .feedback-text {
+        margin: 5px 0 8px;
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.55;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .sentiment-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 650;
+    }
+
+    .sentiment-positive {
+        color: #15803d;
+        background: #ecfdf3;
+    }
+
+    .sentiment-negative {
+        color: #dc2626;
+        background: #fef2f2;
+    }
+
+    .sentiment-neutral {
+        color: #a16207;
+        background: #fefce8;
+    }
+
+    .empty {
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    /* Loading */
+    .loading {
+        position: relative;
+        overflow: hidden;
+        color: transparent !important;
+        background: #f3f4f6;
+        border-radius: 5px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .chart-grid,
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .dashboard-page {
+            padding: 20px 15px 35px;
+        }
+
+        .dashboard-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .dashboard-actions {
+            width: 100%;
+        }
+
+        .dashboard-date {
+            flex: 1;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 16px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+        }
+
+        .chart-body,
+        .small-chart {
+            height: 250px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-add {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="dashboard-page">
+
+```
+<!-- Page Header -->
+<div class="dashboard-top">
+
+    <div class="dashboard-title">
         <h1>Feedback Dashboard</h1>
-        <p class="muted">Welcome, {{ user.name if user else 'User' }}.</p>
+        <p>
+            Welcome back, {{ user.name if user else 'User' }}.
+            Here's what's happening with your customer feedback.
+        </p>
     </div>
-    <a href="{{ url_for('add_feedback') }}" class="btn primary">+ Add Feedback</a>
+
+    <div class="dashboard-actions">
+
+        <div class="dashboard-date">
+            <span>◷</span>
+            <span id="dashboardDate">Today</span>
+        </div>
+
+        <a href="{{ url_for('add_feedback') }}" class="dashboard-add">
+            <span>+</span>
+            <span>Add Feedback</span>
+        </a>
+
+    </div>
+
 </div>
 
+
+<!-- Statistics -->
 <div class="stats-grid">
+
     <div class="stat-card">
-        <span>Total Feedback</span>
-        <strong id="totalFeedback">0</strong>
+        <div class="stat-top">
+            <span class="stat-label">Total Feedback</span>
+            <div class="stat-icon">◎</div>
+        </div>
+
+        <strong id="totalFeedback" class="stat-value">0</strong>
+        <div class="stat-note">All customer responses</div>
     </div>
+
+
     <div class="stat-card positive-card">
-        <span>Positive</span>
-        <strong id="positiveFeedback">0</strong>
+        <div class="stat-top">
+            <span class="stat-label">Positive</span>
+            <div class="stat-icon">↗</div>
+        </div>
+
+        <strong id="positiveFeedback" class="stat-value">0</strong>
+        <div class="stat-note">Positive customer sentiment</div>
     </div>
+
+
     <div class="stat-card negative-card">
-        <span>Negative</span>
-        <strong id="negativeFeedback">0</strong>
+        <div class="stat-top">
+            <span class="stat-label">Negative</span>
+            <div class="stat-icon">↘</div>
+        </div>
+
+        <strong id="negativeFeedback" class="stat-value">0</strong>
+        <div class="stat-note">Needs attention</div>
     </div>
+
+
     <div class="stat-card neutral-card">
-        <span>Neutral</span>
-        <strong id="neutralFeedback">0</strong>
+        <div class="stat-top">
+            <span class="stat-label">Neutral</span>
+            <div class="stat-icon">—</div>
+        </div>
+
+        <strong id="neutralFeedback" class="stat-value">0</strong>
+        <div class="stat-note">Neutral customer sentiment</div>
     </div>
+
 </div>
+
+
+<!-- Analytics -->
+<div class="section-heading">
+    <h2>Analytics Overview</h2>
+    <span>Customer feedback insights</span>
+</div>
+
 
 <div class="chart-grid">
-    <div class="card">
+
+    <!-- Sentiment -->
+    <div class="dashboard-card">
+
         <div class="card-header">
-            <h2>Sentiment Overview</h2>
+            <div>
+                <h2>Sentiment Overview</h2>
+                <div class="subtext">Overall customer sentiment</div>
+            </div>
         </div>
-        <div class="chart-wrapper small-chart">
-            <canvas id="sentimentChart"></canvas>
+
+        <div class="chart-body">
+            <div class="chart-wrapper small-chart">
+                <canvas id="sentimentChart"></canvas>
+            </div>
         </div>
+
     </div>
 
-    <div class="card">
+
+    <!-- Category -->
+    <div class="dashboard-card">
+
         <div class="card-header">
-            <h2>Feedback by Category</h2>
+            <div>
+                <h2>Feedback by Category</h2>
+                <div class="subtext">Distribution across feedback categories</div>
+            </div>
         </div>
-        <div class="chart-wrapper">
-            <canvas id="categoryChart"></canvas>
+
+        <div class="chart-body">
+            <div class="chart-wrapper">
+                <canvas id="categoryChart"></canvas>
+            </div>
         </div>
+
     </div>
+
 </div>
 
+
+<!-- Bottom Section -->
 <div class="content-grid">
-    <div class="card">
+
+    <!-- Themes -->
+    <div class="dashboard-card">
+
         <div class="card-header">
-            <h2>Top Themes</h2>
+            <div>
+                <h2>Top Themes</h2>
+                <div class="subtext">Most common feedback topics</div>
+            </div>
         </div>
+
         <div id="themesList" class="themes-list">
             <div class="empty">Loading...</div>
         </div>
+
     </div>
 
-    <div class="card">
+
+    <!-- Recent Feedback -->
+    <div class="dashboard-card">
+
         <div class="card-header">
-            <h2>Recent Feedback</h2>
-            <a href="{{ url_for('feedback') }}">View all</a>
+
+            <div>
+                <h2>Recent Feedback</h2>
+                <div class="subtext">Latest customer responses</div>
+            </div>
+
+            <a href="{{ url_for('feedback') }}">
+                View all
+            </a>
+
         </div>
+
         <div id="recentFeedback" class="recent-list">
             <div class="empty">Loading...</div>
         </div>
+
     </div>
+
 </div>
+```
+
+</div>
+
+<script>
+    // Small date helper — does not affect dashboard functionality
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const dateElement = document.getElementById("dashboardDate");
+
+        if (dateElement) {
+            const now = new Date();
+
+            dateElement.textContent = now.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+    });
+</script>
+
 {% endblock %}
 
 {% block scripts %}
+
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
 {% endblock %}
